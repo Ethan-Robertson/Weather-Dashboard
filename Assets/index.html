@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+        .forecast {
+            margin-top: 20px;
+        }
+        .forecast-item {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Forecast</h1>
+        <input type="text" id="lat" placeholder="Enter Latitude">
+        <input type="text" id="lon" placeholder="Enter Longitude">
+        <button onclick="getForecast()">Get Forecast</button>
+        <div class="forecast" id="forecast"></div>
+    </div>
+
+    <script>
+        function getForecast() {
+            const lat = document.getElementById('lat').value;
+            const lon = document.getElementById('lon').value;
+            const apiKey = '3ca979f46e38c0690e2e59c19c01c55f';
+            const url = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const forecastDiv = document.getElementById('forecast');
+                    forecastDiv.innerHTML = '';
+
+                    data.list.forEach(item => {
+                        const forecastItem = document.createElement('div');
+                        forecastItem.className = 'forecast-item';
+                        forecastItem.innerHTML = `
+                            <p>Date: ${new Date(item.dt_txt).toLocaleString()}</p>
+                            <p>Temperature: ${(item.main.temp - 273.15).toFixed(2)} °C</p>
+                            <p>Weather: ${item.weather[0].description}</p>
+                        `;
+                        forecastDiv.appendChild(forecastItem);
+                    });
+                })
+                .catch(error => console.error('Error fetching the forecast:', error));
+        }
+    </script>
+</body>
+</html>
